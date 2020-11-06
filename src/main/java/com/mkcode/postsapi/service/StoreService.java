@@ -2,7 +2,6 @@ package com.mkcode.postsapi.service;
 
 import com.mkcode.postsapi.model.PostDto;
 import com.mkcode.postsapi.persistence.StoreRepository;
-import com.mkcode.postsapi.persistence.model.Operator;
 import com.mkcode.postsapi.persistence.model.Post;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -84,66 +84,47 @@ public class StoreService {
                 post.getTimestamp());
     }
 
-    public static void main(String[] args) {
-        String mydata = "AND(EQUAL(id, \"Asdf\"),EQUAL(title, \"some\"))";
-        Specification<Post> specification = createSpecification(mydata);
-        System.out.println(specification);
-
+    public static Specification<Post> createSpecification(String expression) {
+        var operation = OperationParser.parseOperation(expression);
+        var parameters = operation.getValue();
+        return switch (operation.getKey()) {
+            case "EQUAL" -> createEqualsSpecification(parameters.get(0), parameters.get(1));
+            case "AND" -> createAndSpecification(
+                    createSpecification(parameters.get(0)),
+                    createSpecification(parameters.get(1)));
+            case "OR" -> createOrSpecification(
+                    createSpecification(parameters.get(0)),
+                    createSpecification(parameters.get(1)));
+            case "NOT" -> createNotSpecification(
+                    createSpecification(parameters.get(0)));
+            case "GREATER_THAN" -> createGreaterThenSpecification(parameters.get(0), parameters.get(1));
+            case "LESS_THAN" -> createLessThenSpecification(parameters.get(0), parameters.get(1));
+            default -> throw new RuntimeException(format("unknown operator: %s", operation.getKey()));
+        };
     }
 
-    public static Specification<Post> createSpecification(String expression) {
-        Pair<String, Pair<String, String>> evaluate = evaluate(expression);
-        return switch (evaluate.getKey()) {
-            case "EQUAL" -> createEqualsSpecification(evaluate.getValue().getKey(), evaluate.getValue().getValue());
-            case "AND" -> createAndSpecification(
-                    createSpecification(evaluate.getValue().getKey()),
-                    createSpecification(evaluate.getValue().getValue()));
-            case "NOT" -> createNotSpecification(
-                    createSpecification(evaluate.getValue().getKey()));
-            default -> throw new RuntimeException("unknown operator");
-        };
+    private static Specification<Post> createLessThenSpecification(String fieldName, String value) {
+        //todo validate value is a number and field is number type
+        return (root, query, builder) -> builder.lessThan(root.get(fieldName), value);
+    }
+
+    private static Specification<Post> createGreaterThenSpecification(String fieldName, String value) {
+        //todo validate value is a number and field is number type
+        return (root, query, builder) -> builder.greaterThan(root.get(fieldName), value);
     }
 
     private static Specification<Post> createAndSpecification(Specification<Post> specification, Specification<Post> specification1) {
         return specification.and(specification1);
     }
+    private static Specification<Post> createOrSpecification(Specification<Post> specification, Specification<Post> specification1) {
+        return specification.or(specification1);
+    }
+
     private static Specification<Post> createNotSpecification(Specification<Post> specification) {
         return (root, query, builder) -> specification.toPredicate(root, query, builder).not();
     }
 
     private static Specification<Post> createEqualsSpecification(String fieldName, String value) {
         return (root, query, builder) -> builder.equal(root.get(fieldName), value);
-    }
-
-    private static Pair<String, Pair<String, String>> evaluate(String expression) {
-        Pattern pattern = Pattern.compile("(NOT|EQUAL|AND)\\((.*)\\)");
-        Matcher matcher = pattern.matcher(expression);
-        if (matcher.find()) {
-            System.out.println(matcher.group(0)); // jei nera exception validus
-            System.out.println(matcher.group(1)); // operatorius
-            System.out.println(matcher.group(2)); // operatoriaus parametrai
-            var operandsStr = matcher.group(2);
-            int openBrackets = 0;
-            int splitter = 0;
-            for (int i = 0; i < operandsStr.length(); i++){
-                if (operandsStr.charAt(i) == '(') openBrackets++;
-                if (operandsStr.charAt(i) == ')') openBrackets--;
-                if (operandsStr.charAt(i) == ',' && openBrackets == 0) splitter = i;
-            }
-            System.out.println("-----");
-            System.out.println(operandsStr.substring(0, splitter));
-            System.out.println("-----");
-            System.out.println(operandsStr.substring(splitter+1));
-
-            Pair<String, String> operands;
-            if (splitter != 0) {
-                operands = Pair.of(operandsStr.substring(0, splitter), operandsStr.substring(splitter+1));
-            } else
-                operands = Pair.of(operandsStr, null);
-
-            return Pair.of(matcher.group(1), operands);
-        } else {
-            throw new RuntimeException("expression is not valid");
-        }
     }
 }
