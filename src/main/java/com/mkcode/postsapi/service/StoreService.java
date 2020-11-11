@@ -1,8 +1,8 @@
 package com.mkcode.postsapi.service;
 
-import com.mkcode.postsapi.model.PostDto;
 import com.mkcode.postsapi.persistence.StoreRepository;
 import com.mkcode.postsapi.persistence.model.Post;
+import com.mkcode.postsapi.service.model.PostDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -22,11 +22,6 @@ public class StoreService {
     }
 
     public List<PostDto> query(String query) {
-
-        // https://www.baeldung.com/jpa-and-or-criteria-predicates
-        // https://github.com/teten-nugraha/spring-data-jpa-dynamic-where/blob/master/src/main/java/id/learn/dynamicwhere/searchSpec/GenericSpesification.java
-        // https://medium.com/backend-habit/spring-jpa-make-dynamic-where-using-predicate-and-criteria-84550dfaa182
-
         return repository.findAll(createSpecification(query)).stream()
                 .map(this::concertToPostDto)
                 .collect(toList());

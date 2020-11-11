@@ -1,4 +1,4 @@
-package com.mkcode.postsapi.model;
+package com.mkcode.postsapi.service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
