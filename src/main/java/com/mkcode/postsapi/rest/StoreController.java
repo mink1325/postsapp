@@ -1,7 +1,7 @@
 package com.mkcode.postsapi.rest;
 
-import com.mkcode.postsapi.service.model.PostDto;
 import com.mkcode.postsapi.service.StoreService;
+import com.mkcode.postsapi.service.model.PostDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
