@@ -28,7 +28,7 @@ public class Operation {
 
     private void validateNumberOfParameters() {
         if (operator.getNumberParameters() != parameters.size()) {
-            throw new InvalidParameterException(format("Operator %s should have %d parameter(s)", operator.name(),
+            throw new OperationValidationException(format("Operator %s should have %d parameter(s)", operator.name(),
                     operator.getNumberParameters()));
         }
     }
@@ -36,7 +36,7 @@ public class Operation {
     private void validateFieldNames() {
         if (operator == EQUAL || operator == GREATER_THAN || operator == LESS_THAN) {
             if (!validFields.contains(parameters.get(0))) {
-                throw new InvalidParameterException(format("%s is invalid field", parameters.get(0)));
+                throw new OperationValidationException(format("%s is invalid field", parameters.get(0)));
             }
         }
     }
@@ -44,10 +44,10 @@ public class Operation {
     private void validateOperationWithNumericFields() {
         if (operator == GREATER_THAN || operator == LESS_THAN) {
             if (!integerFields.contains(parameters.get(0))) {
-                throw new InvalidParameterException(format("Field %s is not of integer data type", parameters.get(0)));
+                throw new OperationValidationException(format("Field %s is not of integer data type", parameters.get(0)));
             }
             if (!isNumeric(parameters.get(1))) {
-                throw new InvalidParameterException(format("Value %s is not of valid integer value", parameters.get(1)));
+                throw new OperationValidationException(format("Value %s is not of valid integer value", parameters.get(1)));
             }
         }
     }
@@ -55,7 +55,7 @@ public class Operation {
     private void validateDoubleQuotesInTextField() {
         if (operator == EQUAL && !integerFields.contains(parameters.get(0))) {
             if (!parameters.get(1).matches("\"(.*)\"")) {
-                throw new InvalidParameterException(format("Parameter %s value should be enclosed with double quotes",
+                throw new OperationValidationException(format("Parameter %s value should be enclosed with double quotes",
                         parameters.get(0)));
             }
         }

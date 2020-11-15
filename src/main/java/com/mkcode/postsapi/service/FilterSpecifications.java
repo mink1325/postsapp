@@ -3,7 +3,7 @@ package com.mkcode.postsapi.service;
 import com.mkcode.postsapi.persistence.model.Post;
 import org.springframework.data.jpa.domain.Specification;
 
-import static org.apache.commons.lang3.StringUtils.strip;
+import static org.apache.commons.lang3.StringUtils.unwrap;
 
 public class FilterSpecifications {
 
@@ -45,6 +45,6 @@ public class FilterSpecifications {
     }
 
     private static Specification<Post> createEqualsSpecification(String fieldName, String value) {
-        return (root, query, builder) -> builder.equal(root.get(fieldName), strip(value, "\""));
+        return (root, query, builder) -> builder.equal(root.get(fieldName), unwrap(value, "\""));
     }
 }

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class OperationTest {
 
     @Test
-    void testValidOperators() {
+    void testValidOperation() {
         assertDoesNotThrow(() -> new Operation("EQUAL", List.of("id", "\"2\"")));
         assertDoesNotThrow(() -> new Operation("EQUAL", List.of("views", "2")));
         assertDoesNotThrow(() -> new Operation("LESS_THAN", List.of("timestamp", "2")));
@@ -28,7 +28,7 @@ class OperationTest {
     @CsvSource({"EQUAL,1", "AND,3", "OR,1", "NOT,2", "GREATER_THAN,3", "GREATER_THAN,3"})
     void testInvalidNumberOfParameters(String operator, int numberOfParameters) {
         assertThatThrownBy(() -> new Operation(operator, getParametersList(numberOfParameters)))
-                .isExactlyInstanceOf(InvalidParameterException.class)
+                .isExactlyInstanceOf(OperationValidationException.class)
                 .hasMessage("Operator %s should have %d parameter(s)", operator,
                         Operator.valueOf(operator).getNumberParameters());
     }
@@ -37,7 +37,7 @@ class OperationTest {
     @CsvSource({"EQUAL", "GREATER_THAN", "LESS_THAN"})
     void testInvalidFieldNames(String operator) {
         assertThatThrownBy(() -> new Operation(operator, List.of("created_by", "2")))
-                .isExactlyInstanceOf(InvalidParameterException.class)
+                .isExactlyInstanceOf(OperationValidationException.class)
                 .hasMessage("created_by is invalid field");
     }
 
@@ -45,7 +45,7 @@ class OperationTest {
     @CsvSource({"GREATER_THAN", "LESS_THAN"})
     void testInvalidIntegerField(String operator) {
         assertThatThrownBy(() -> new Operation(operator, List.of("id", "2")))
-                .isExactlyInstanceOf(InvalidParameterException.class)
+                .isExactlyInstanceOf(OperationValidationException.class)
                 .hasMessage("Field id is not of integer data type");
     }
 
@@ -53,14 +53,14 @@ class OperationTest {
     @CsvSource({"GREATER_THAN", "LESS_THAN"})
     void testInvalidIntegerValue(String operator) {
         assertThatThrownBy(() -> new Operation(operator, List.of("views", "a")))
-                .isExactlyInstanceOf(InvalidParameterException.class)
+                .isExactlyInstanceOf(OperationValidationException.class)
                 .hasMessage("Value a is not of valid integer value");
     }
 
     @Test
-    void testTextWithoutDoubleQuate() {
+    void testTextWithoutDoubleQuates() {
         assertThatThrownBy(() -> new Operation("EQUAL", List.of("id", "a")))
-                .isExactlyInstanceOf(InvalidParameterException.class)
+                .isExactlyInstanceOf(OperationValidationException.class)
                 .hasMessage("Parameter id value should be enclosed with double quotes");
     }
 
