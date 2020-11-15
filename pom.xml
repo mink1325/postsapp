@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.mkcode</groupId>
-	<artifactId>postsapi</artifactId>
+	<artifactId>postsapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>postsapi</name>
+	<name>postsapp</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.4.5</version>
+			<version>1.5.0</version>
 		</dependency>
     </dependencies>
 

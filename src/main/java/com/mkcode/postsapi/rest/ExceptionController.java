@@ -1,7 +1,7 @@
 package com.mkcode.postsapi.rest;
 
 import com.mkcode.postsapi.service.ExpressionValidationException;
-import com.mkcode.postsapi.service.InvalidNumberOfParametersException;
+import com.mkcode.postsapi.service.InvalidParameterException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public class ExceptionController {
 
     @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler({ExpressionValidationException.class, InvalidNumberOfParametersException.class})
+    @ExceptionHandler({ExpressionValidationException.class, InvalidParameterException.class})
     public String handleException(RuntimeException exception) {
         log.debug("Query validation exception happens: {}", exception.getMessage());
         return exception.getMessage();

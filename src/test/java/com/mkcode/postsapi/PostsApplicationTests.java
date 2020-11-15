@@ -93,11 +93,11 @@ class PostsApplicationTests {
 
     @ParameterizedTest
     @CsvSource(delimiter = ';', value = {
-            "EQUAL(id,100);0",
+            "EQUAL(id,\"100\");0",
             "OR(EQUAL(title,\"title 1\"),EQUAL(content,\"text 2\"));2",
             "LESS_THAN(views,4);3",
-            "AND(GREATER_THAN(views,1),LESS_THAN(views,4));2"
-            //todo add NOT
+            "AND(GREATER_THAN(views,1),LESS_THAN(views,4));2",
+            "NOT(GREATER_THAN(views,4));4"
     })
     void testQuery(String query, int expectedResults) throws Exception {
         mockMvc.perform(get("/store")

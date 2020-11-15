@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.mkcode.postsapi.service.OperationParser.parseOperation;
+import static com.mkcode.postsapi.service.ExpressionParser.parseOperation;
 import static com.mkcode.postsapi.service.Operator.AND;
 import static com.mkcode.postsapi.service.Operator.EQUAL;
 import static com.mkcode.postsapi.service.Operator.GREATER_THAN;
@@ -19,11 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-class OperationParserTest {
+class ExpressionParserTest {
 
     static Stream<Arguments> validExpressions() {
         return Stream.of(
-                arguments("EQUAL(id, \"first-post\")", EQUAL, List.of("id", "first-post")),
+                arguments("EQUAL(id, \"first-post\")", EQUAL, List.of("id", "\"first-post\"")),
                 arguments("EQUAL(views,100)", EQUAL, List.of("views", "100")),
                 arguments("AND(EQUAL(id,\"first-post\"),EQUAL(views,100))",
                         AND, List.of("EQUAL(id,\"first-post\")", "EQUAL(views,100)")),

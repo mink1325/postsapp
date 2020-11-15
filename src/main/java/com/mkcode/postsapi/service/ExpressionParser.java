@@ -6,9 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
-import static org.apache.commons.lang3.StringUtils.strip;
 
-class OperationParser {
+class ExpressionParser {
     private static final Pattern pattern = Pattern.compile("^(EQUAL|AND|OR|NOT|GREATER_THAN|LESS_THAN)\\((.*\\S.*)\\)$");
 
     static Operation parseOperation(String expression) {
@@ -39,6 +38,6 @@ class OperationParser {
             }
         }
         parameters.add(parameterString.substring(splitter));
-        return parameters.stream().map(s -> strip(s, " \"")).collect(toUnmodifiableList());
+        return parameters.stream().map(String::strip).collect(toUnmodifiableList());
     }
 }
